@@ -73,8 +73,8 @@
                   type="time"
                   class="time-input"
                   :value="getBlocoInicio(dia.key, blocoNum)"
-                  @input="updateBlocoInicio(dia.key, blocoNum, $event.target.value)"
-                  @blur="formatTimeInput(dia.key, blocoNum, 'inicio', $event.target.value)"
+                  @input="(e) => updateBlocoInicio(dia.key, blocoNum, e.target.value)"
+                  @change="(e) => formatTimeInput(dia.key, blocoNum, 'inicio', e.target.value)"
                 />
                 <svg class="clock-icon" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
@@ -89,8 +89,8 @@
                   type="time"
                   class="time-input"
                   :value="getBlocoTermino(dia.key, blocoNum)"
-                  @input="updateBlocoTermino(dia.key, blocoNum, $event.target.value)"
-                  @blur="formatTimeInput(dia.key, blocoNum, 'termino', $event.target.value)"
+                  @input="(e) => updateBlocoTermino(dia.key, blocoNum, e.target.value)"
+                  @change="(e) => formatTimeInput(dia.key, blocoNum, 'termino', e.target.value)"
                 />
                 <svg class="clock-icon" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
@@ -295,23 +295,27 @@ export default {
 
     // Atualizar horário de início
     const updateBlocoInicio = (diaKey, blocoNum, valor) => {
-      const newBlocos = { ...blocos.value };
+      console.log('updateBlocoInicio', { diaKey, blocoNum, valor });
+      const newBlocos = JSON.parse(JSON.stringify(blocos.value)); // Deep clone
       if (!newBlocos[diaKey]) {
-        newBlocos[diaKey] = {};
+        newBlocos[diaKey] = inicializarBlocos()[diaKey];
       }
-      // Armazena temporariamente sem segundos
+      // Armazena o valor
       newBlocos[diaKey][`bloco_${blocoNum}_inicio`] = valor;
+      console.log('Novo blocos:', newBlocos);
       setBlocos(newBlocos);
     };
 
     // Atualizar horário de término
     const updateBlocoTermino = (diaKey, blocoNum, valor) => {
-      const newBlocos = { ...blocos.value };
+      console.log('updateBlocoTermino', { diaKey, blocoNum, valor });
+      const newBlocos = JSON.parse(JSON.stringify(blocos.value)); // Deep clone
       if (!newBlocos[diaKey]) {
-        newBlocos[diaKey] = {};
+        newBlocos[diaKey] = inicializarBlocos()[diaKey];
       }
-      // Armazena temporariamente sem segundos
+      // Armazena o valor
       newBlocos[diaKey][`bloco_${blocoNum}_termino`] = valor;
+      console.log('Novo blocos:', newBlocos);
       setBlocos(newBlocos);
     };
 
@@ -319,7 +323,8 @@ export default {
     const formatTimeInput = (diaKey, blocoNum, tipo, valor) => {
       if (!valor) return;
 
-      const newBlocos = { ...blocos.value };
+      console.log('formatTimeInput', { diaKey, blocoNum, tipo, valor });
+      const newBlocos = JSON.parse(JSON.stringify(blocos.value)); // Deep clone
       const campo = `bloco_${blocoNum}_${tipo}`;
 
       // Adiciona :00 se não tiver segundos
@@ -327,6 +332,7 @@ export default {
         ? `${valor}:00`
         : valor;
 
+      console.log('Após format:', newBlocos[diaKey][campo]);
       setBlocos(newBlocos);
     };
 
