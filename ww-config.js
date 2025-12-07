@@ -511,6 +511,70 @@ export default {
         tooltip: 'When enabled, days are automatically expanded when selected'
       }
       /* wwEditor:end */
+    },
+
+    // Mensagens de Validação
+    msgErroBlocoIncompleto: {
+      label: {
+        en: 'Incomplete Block Error Message',
+        pt: 'Mensagem Erro Bloco Incompleto'
+      },
+      type: 'Text',
+      section: 'settings',
+      bindable: true,
+      multiLang: true,
+      defaultValue: 'Preencha tanto o horário de início quanto o de término',
+      /* wwEditor:start */
+      bindingValidation: {
+        type: 'string',
+        tooltip: 'Error message when block has only start or end time'
+      },
+      propertyHelp: {
+        tooltip: 'Displayed when user fills only one time field'
+      }
+      /* wwEditor:end */
+    },
+
+    msgErroTerminoMenorInicio: {
+      label: {
+        en: 'End Before Start Error Message',
+        pt: 'Mensagem Erro Término Antes de Início'
+      },
+      type: 'Text',
+      section: 'settings',
+      bindable: true,
+      multiLang: true,
+      defaultValue: 'O horário de término deve ser maior que o de início',
+      /* wwEditor:start */
+      bindingValidation: {
+        type: 'string',
+        tooltip: 'Error message when end time is before or equal to start time'
+      },
+      propertyHelp: {
+        tooltip: 'Displayed when end time is not greater than start time'
+      }
+      /* wwEditor:end */
+    },
+
+    msgErroSobreposicao: {
+      label: {
+        en: 'Overlapping Blocks Error Message',
+        pt: 'Mensagem Erro Sobreposição'
+      },
+      type: 'Text',
+      section: 'settings',
+      bindable: true,
+      multiLang: true,
+      defaultValue: 'Sobreposição com o bloco',
+      /* wwEditor:start */
+      bindingValidation: {
+        type: 'string',
+        tooltip: 'Error message when blocks overlap (block number will be appended)'
+      },
+      propertyHelp: {
+        tooltip: 'Displayed when time blocks overlap. Block number is automatically added.'
+      }
+      /* wwEditor:end */
     }
   }
 };

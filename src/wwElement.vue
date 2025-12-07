@@ -64,38 +64,45 @@
           <div
             v-for="blocoNum in quantidadeBlocosPorDia[dia.index]"
             :key="blocoNum"
-            class="bloco-horario"
+            class="bloco-horario-wrapper"
           >
-            <div class="horario-field">
-              <label class="field-label">Horário de início</label>
-              <div class="time-input-wrapper">
-                <input
-                  type="time"
-                  class="time-input"
-                  :value="getBlocoInicio(dia.key, blocoNum)"
-                  @input="(e) => updateBlocoInicio(dia.key, blocoNum, e.target.value)"
-                  @change="(e) => formatTimeInput(dia.key, blocoNum, 'inicio', e.target.value)"
-                />
-                <svg class="clock-icon" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
-                </svg>
+            <div class="bloco-horario">
+              <div class="horario-field">
+                <label class="field-label">Horário de início</label>
+                <div class="time-input-wrapper">
+                  <input
+                    type="time"
+                    class="time-input"
+                    :value="getBlocoInicio(dia.key, blocoNum)"
+                    @input="(e) => updateBlocoInicio(dia.key, blocoNum, e.target.value)"
+                    @change="(e) => formatTimeInput(dia.key, blocoNum, 'inicio', e.target.value)"
+                  />
+                  <svg class="clock-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="horario-field">
+                <label class="field-label">Horário de Término</label>
+                <div class="time-input-wrapper">
+                  <input
+                    type="time"
+                    class="time-input"
+                    :value="getBlocoTermino(dia.key, blocoNum)"
+                    @input="(e) => updateBlocoTermino(dia.key, blocoNum, e.target.value)"
+                    @change="(e) => formatTimeInput(dia.key, blocoNum, 'termino', e.target.value)"
+                  />
+                  <svg class="clock-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
+                  </svg>
+                </div>
               </div>
             </div>
 
-            <div class="horario-field">
-              <label class="field-label">Horário de Término</label>
-              <div class="time-input-wrapper">
-                <input
-                  type="time"
-                  class="time-input"
-                  :value="getBlocoTermino(dia.key, blocoNum)"
-                  @input="(e) => updateBlocoTermino(dia.key, blocoNum, e.target.value)"
-                  @change="(e) => formatTimeInput(dia.key, blocoNum, 'termino', e.target.value)"
-                />
-                <svg class="clock-icon" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
-                </svg>
-              </div>
+            <!-- Mensagem de Erro -->
+            <div v-if="getErroBloco(dia.key, blocoNum)" class="bloco-erro">
+              {{ getErroBloco(dia.key, blocoNum) }}
             </div>
           </div>
         </div>
@@ -135,22 +142,23 @@ export default {
       return false;
     });
 
-    // Definição dos dias da semana
+    // Definição dos dias da semana (segunda a domingo)
     const diasSemana = [
-      { index: 0, key: 'domingo', label: 'Domingo' },
-      { index: 1, key: 'segunda', label: 'Segunda-feira' },
-      { index: 2, key: 'terca', label: 'Terça-feira' },
-      { index: 3, key: 'quarta', label: 'Quarta-feira' },
-      { index: 4, key: 'quinta', label: 'Quinta-feira' },
-      { index: 5, key: 'sexta', label: 'Sexta-feira' },
-      { index: 6, key: 'sabado', label: 'Sábado' }
+      { index: 0, key: 'segunda', label: 'Segunda-feira' },
+      { index: 1, key: 'terca', label: 'Terça-feira' },
+      { index: 2, key: 'quarta', label: 'Quarta-feira' },
+      { index: 3, key: 'quinta', label: 'Quinta-feira' },
+      { index: 4, key: 'sexta', label: 'Sexta-feira' },
+      { index: 5, key: 'sabado', label: 'Sábado' },
+      { index: 6, key: 'domingo', label: 'Domingo' }
     ];
 
     // Inicializar estrutura de blocos vazia
     const inicializarBlocos = () => {
       const blocos = {};
-      diasSemana.forEach(dia => {
-        blocos[dia.key] = {
+      const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+      dias.forEach(dia => {
+        blocos[dia] = {
           bloco_1_inicio: '',
           bloco_1_termino: '',
           bloco_2_inicio: '',
@@ -190,8 +198,25 @@ export default {
       defaultValue: inicializarBlocos()
     });
 
+    const { value: validacaoOk, setValue: setValidacaoOk } = wwLib.wwVariable.useComponentVariable({
+      uid: props.uid,
+      name: 'validacaoOk',
+      type: 'boolean',
+      defaultValue: true
+    });
+
+    const { value: mensagensErro, setValue: setMensagensErro } = wwLib.wwVariable.useComponentVariable({
+      uid: props.uid,
+      name: 'mensagensErro',
+      type: 'array',
+      defaultValue: []
+    });
+
     // State interno para controle de expansão
     const expandedDays = ref(new Set());
+
+    // State interno para erros por bloco
+    const errosPorBloco = ref({});
 
     // Toggle seleção do dia
     const toggleDiaSelection = (diaIndex) => {
@@ -295,35 +320,36 @@ export default {
 
     // Atualizar horário de início
     const updateBlocoInicio = (diaKey, blocoNum, valor) => {
-      console.log('updateBlocoInicio', { diaKey, blocoNum, valor });
       const newBlocos = JSON.parse(JSON.stringify(blocos.value)); // Deep clone
       if (!newBlocos[diaKey]) {
         newBlocos[diaKey] = inicializarBlocos()[diaKey];
       }
       // Armazena o valor
       newBlocos[diaKey][`bloco_${blocoNum}_inicio`] = valor;
-      console.log('Novo blocos:', newBlocos);
       setBlocos(newBlocos);
+
+      // Validar após atualizar (com delay para garantir reatividade)
+      setTimeout(() => validarTodosOsBlocos(), 100);
     };
 
     // Atualizar horário de término
     const updateBlocoTermino = (diaKey, blocoNum, valor) => {
-      console.log('updateBlocoTermino', { diaKey, blocoNum, valor });
       const newBlocos = JSON.parse(JSON.stringify(blocos.value)); // Deep clone
       if (!newBlocos[diaKey]) {
         newBlocos[diaKey] = inicializarBlocos()[diaKey];
       }
       // Armazena o valor
       newBlocos[diaKey][`bloco_${blocoNum}_termino`] = valor;
-      console.log('Novo blocos:', newBlocos);
       setBlocos(newBlocos);
+
+      // Validar após atualizar (com delay para garantir reatividade)
+      setTimeout(() => validarTodosOsBlocos(), 100);
     };
 
     // Formatar input de tempo ao perder foco (adiciona :00 segundos)
     const formatTimeInput = (diaKey, blocoNum, tipo, valor) => {
       if (!valor) return;
 
-      console.log('formatTimeInput', { diaKey, blocoNum, tipo, valor });
       const newBlocos = JSON.parse(JSON.stringify(blocos.value)); // Deep clone
       const campo = `bloco_${blocoNum}_${tipo}`;
 
@@ -332,8 +358,86 @@ export default {
         ? `${valor}:00`
         : valor;
 
-      console.log('Após format:', newBlocos[diaKey][campo]);
       setBlocos(newBlocos);
+
+      // Validar após atualizar
+      setTimeout(() => validarTodosOsBlocos(), 100);
+    };
+
+    // Função de validação de blocos
+    const validarBloco = (diaKey, blocoNum) => {
+      const inicio = blocos.value[diaKey]?.[`bloco_${blocoNum}_inicio`];
+      const termino = blocos.value[diaKey]?.[`bloco_${blocoNum}_termino`];
+
+      // Se ambos estão vazios, não há erro
+      if (!inicio && !termino) {
+        return null;
+      }
+
+      // Se só um está preenchido
+      if (!inicio || !termino) {
+        return props.content?.msgErroBlocoIncompleto || 'Preencha tanto o horário de início quanto o de término';
+      }
+
+      // Validar se término > início
+      if (termino <= inicio) {
+        return props.content?.msgErroTerminoMenorInicio || 'O horário de término deve ser maior que o de início';
+      }
+
+      // Validar sobreposição com outros blocos do mesmo dia
+      const quantidade = quantidadeBlocosPorDia.value[diasSemana.findIndex(d => d.key === diaKey)];
+
+      for (let i = 1; i <= quantidade; i++) {
+        if (i === blocoNum) continue; // Pula o bloco atual
+
+        const outroInicio = blocos.value[diaKey]?.[`bloco_${i}_inicio`];
+        const outroTermino = blocos.value[diaKey]?.[`bloco_${i}_termino`];
+
+        if (!outroInicio || !outroTermino) continue; // Pula blocos incompletos
+
+        // Verifica sobreposição
+        // Bloco atual começa durante outro bloco OU bloco atual termina durante outro bloco
+        // OU bloco atual engloba outro bloco
+        if (
+          (inicio < outroTermino && termino > outroInicio)
+        ) {
+          return props.content?.msgErroSobreposicao || `Sobreposição com o bloco ${i}`;
+        }
+      }
+
+      return null; // Sem erros
+    };
+
+    // Validar todos os blocos e atualizar variáveis expostas
+    const validarTodosOsBlocos = () => {
+      const novosErros = {};
+      const mensagens = [];
+
+      diasSemana.forEach((dia) => {
+        if (!diasSemanaEscolhidos.value[dia.index]) return;
+
+        const quantidade = quantidadeBlocosPorDia.value[dia.index];
+
+        for (let i = 1; i <= quantidade; i++) {
+          const erro = validarBloco(dia.key, i);
+
+          if (erro) {
+            const chave = `${dia.key}_bloco_${i}`;
+            novosErros[chave] = erro;
+            mensagens.push(`${dia.label} - Bloco ${i}: ${erro}`);
+          }
+        }
+      });
+
+      errosPorBloco.value = novosErros;
+      setMensagensErro(mensagens);
+      setValidacaoOk(mensagens.length === 0);
+    };
+
+    // Obter erro de um bloco específico
+    const getErroBloco = (diaKey, blocoNum) => {
+      const chave = `${diaKey}_bloco_${blocoNum}`;
+      return errosPorBloco.value[chave] || null;
     };
 
     return {
@@ -349,7 +453,8 @@ export default {
       getBlocoTermino,
       updateBlocoInicio,
       updateBlocoTermino,
-      formatTimeInput
+      formatTimeInput,
+      getErroBloco
     };
   }
 };
@@ -559,5 +664,21 @@ export default {
   height: 20px;
   color: #666;
   pointer-events: none;
+}
+
+.bloco-horario-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bloco-erro {
+  padding: 8px 12px;
+  background-color: #fee;
+  border-left: 3px solid #d32f2f;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #d32f2f;
+  font-weight: 500;
 }
 </style>
