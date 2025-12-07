@@ -1,0 +1,21 @@
+{
+  "name": "ww-disponibilidade-semanal",
+  "version": "1.0.0",
+  "description": "Componente WeWeb para coleta de disponibilidade semanal de profissionais",
+  "main": "ww-config.js",
+  "scripts": {
+    "build": "weweb build",
+    "serve": "weweb serve"
+  },
+  "keywords": [
+    "weweb",
+    "component",
+    "availability",
+    "schedule",
+    "weekly",
+    "disponibilidade",
+    "horarios"
+  ],
+  "author": "",
+  "license": "MIT"
+}
