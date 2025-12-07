@@ -295,8 +295,6 @@ export default {
 
     // Atualizar horário de início
     const updateBlocoInicio = (diaKey, blocoNum, valor) => {
-      if (isEditing.value) return;
-
       const newBlocos = { ...blocos.value };
       if (!newBlocos[diaKey]) {
         newBlocos[diaKey] = {};
@@ -308,8 +306,6 @@ export default {
 
     // Atualizar horário de término
     const updateBlocoTermino = (diaKey, blocoNum, valor) => {
-      if (isEditing.value) return;
-
       const newBlocos = { ...blocos.value };
       if (!newBlocos[diaKey]) {
         newBlocos[diaKey] = {};
@@ -321,7 +317,6 @@ export default {
 
     // Formatar input de tempo ao perder foco (adiciona :00 segundos)
     const formatTimeInput = (diaKey, blocoNum, tipo, valor) => {
-      if (isEditing.value) return;
       if (!valor) return;
 
       const newBlocos = { ...blocos.value };

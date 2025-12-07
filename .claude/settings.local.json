@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Implementar componente WeWeb de disponibilidade semanal\n\n- Adiciona componente Vue 3 completo para coleta de disponibilidade\n- Interface com seleção de 7 dias da semana\n- Até 6 blocos de horário por dia\n- Expansão/colapso de dias selecionados\n- 3 variáveis expostas: diasSemanaEscolhidos, quantidadeBlocosPorDia, blocos\n- 20+ propriedades customizáveis (cores, labels, espaçamentos)\n- Suporte multi-idioma nos labels\n- Formato de dados exato conforme especificado\n- Documentação completa (README, TECHNICAL, EXAMPLES)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
