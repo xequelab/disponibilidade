@@ -142,15 +142,17 @@ export default {
       return false;
     });
 
-    // Definição dos dias da semana (segunda a domingo)
+    // Definição dos dias da semana
+    // index: posição nas variáveis diasSemanaEscolhidos e quantidadeBlocosPorDia (0=domingo, 1=segunda, ...)
+    // A ordem visual na UI é diferente (segunda a domingo)
     const diasSemana = [
-      { index: 0, key: 'segunda', label: 'Segunda-feira' },
-      { index: 1, key: 'terca', label: 'Terça-feira' },
-      { index: 2, key: 'quarta', label: 'Quarta-feira' },
-      { index: 3, key: 'quinta', label: 'Quinta-feira' },
-      { index: 4, key: 'sexta', label: 'Sexta-feira' },
-      { index: 5, key: 'sabado', label: 'Sábado' },
-      { index: 6, key: 'domingo', label: 'Domingo' }
+      { index: 1, key: 'segunda', label: 'Segunda-feira' },
+      { index: 2, key: 'terca', label: 'Terça-feira' },
+      { index: 3, key: 'quarta', label: 'Quarta-feira' },
+      { index: 4, key: 'quinta', label: 'Quinta-feira' },
+      { index: 5, key: 'sexta', label: 'Sexta-feira' },
+      { index: 6, key: 'sabado', label: 'Sábado' },
+      { index: 0, key: 'domingo', label: 'Domingo' }
     ];
 
     // Inicializar estrutura de blocos vazia
