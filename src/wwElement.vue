@@ -20,7 +20,7 @@
           </div>
 
           <span class="dia-label">{{ dia.label }}</span>
-          <span v-if="diasSemanaEscolhidos[dia.index]" class="disponivel-badge">(Disponível)</span>
+          <span v-if="diasSemanaEscolhidos[dia.index]" class="disponivel-badge">{{ content.labelDisponivelBadge || '(Disponível)' }}</span>
         </div>
 
         <button
@@ -50,7 +50,7 @@
             <div class="bloco-horario">
               <div class="bloco-campos">
                 <div class="horario-field">
-                  <label class="field-label">Horário de início</label>
+                  <label class="field-label">{{ content.labelHorarioInicio || 'Horário de início' }}</label>
                   <div class="time-input-wrapper">
                     <input
                       type="time"
@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="horario-field">
-                  <label class="field-label">Horário de Término</label>
+                  <label class="field-label">{{ content.labelHorarioTermino || 'Horário de Término' }}</label>
                   <div class="time-input-wrapper">
                     <input
                       type="time"
@@ -165,18 +165,18 @@ export default {
       '--block-gap': props.content?.blockGap || '16px'
     }));
 
-    // Definição dos dias da semana
+    // Definição dos dias da semana com labels customizáveis
     // index: posição nas variáveis diasSemanaEscolhidos e quantidadeBlocosPorDia (0=domingo, 1=segunda, ...)
     // A ordem visual na UI é diferente (segunda a domingo)
-    const diasSemana = [
-      { index: 1, key: 'segunda', label: 'Segunda-feira' },
-      { index: 2, key: 'terca', label: 'Terça-feira' },
-      { index: 3, key: 'quarta', label: 'Quarta-feira' },
-      { index: 4, key: 'quinta', label: 'Quinta-feira' },
-      { index: 5, key: 'sexta', label: 'Sexta-feira' },
-      { index: 6, key: 'sabado', label: 'Sábado' },
-      { index: 0, key: 'domingo', label: 'Domingo' }
-    ];
+    const diasSemana = computed(() => [
+      { index: 1, key: 'segunda', label: props.content?.labelSegunda || 'Segunda-feira' },
+      { index: 2, key: 'terca', label: props.content?.labelTerca || 'Terça-feira' },
+      { index: 3, key: 'quarta', label: props.content?.labelQuarta || 'Quarta-feira' },
+      { index: 4, key: 'quinta', label: props.content?.labelQuinta || 'Quinta-feira' },
+      { index: 5, key: 'sexta', label: props.content?.labelSexta || 'Sexta-feira' },
+      { index: 6, key: 'sabado', label: props.content?.labelSabado || 'Sábado' },
+      { index: 0, key: 'domingo', label: props.content?.labelDomingo || 'Domingo' }
+    ]);
 
     // Inicializar estrutura de blocos vazia
     const inicializarBlocos = () => {
@@ -284,7 +284,7 @@ export default {
           setQuantidadeBlocosPorDia(newQuantidades);
 
           // Pré-preenche o primeiro bloco com valores padrão
-          const diaKey = diasSemana.find(d => d.index === diaIndex).key;
+          const diaKey = diasSemana.value.find(d => d.index === diaIndex).key;
           const newBlocos = JSON.parse(JSON.stringify(blocos.value));
 
           const defaultBlock1Start = props.content?.defaultBlock1StartTime || '09:00';
@@ -304,7 +304,7 @@ export default {
         setQuantidadeBlocosPorDia(newQuantidades);
 
         // Limpa os horários do dia
-        const diaKey = diasSemana.find(d => d.index === diaIndex).key;
+        const diaKey = diasSemana.value.find(d => d.index === diaIndex).key;
         const newBlocos = { ...blocos.value };
         newBlocos[diaKey] = {
           bloco_1_inicio: '',
@@ -328,7 +328,7 @@ export default {
         name: 'disponibilidadeChange',
         event: {
           diaIndex,
-          diaKey: diasSemana.find(d => d.index === diaIndex).key,
+          diaKey: diasSemana.value.find(d => d.index === diaIndex).key,
           selecionado: newDiasSemana[diaIndex]
         }
       });
@@ -360,7 +360,7 @@ export default {
 
       // Se estiver adicionando o segundo bloco, pré-preenche com valores padrão
       if (quantidadeAtual === 1) {
-        const diaKey = diasSemana.find(d => d.index === diaIndex).key;
+        const diaKey = diasSemana.value.find(d => d.index === diaIndex).key;
         const newBlocos = JSON.parse(JSON.stringify(blocos.value));
 
         const defaultBlock2Start = props.content?.defaultBlock2StartTime || '14:00';
@@ -385,7 +385,7 @@ export default {
       // Não permite deixar sem blocos se o dia está selecionado
       if (quantidadeAtual <= 1) return;
 
-      const diaKey = diasSemana.find(d => d.index === diaIndex).key;
+      const diaKey = diasSemana.value.find(d => d.index === diaIndex).key;
       const newBlocos = JSON.parse(JSON.stringify(blocos.value));
 
       // Move os blocos subsequentes para cima
@@ -490,7 +490,7 @@ export default {
       }
 
       // Validar sobreposição com outros blocos do mesmo dia
-      const quantidade = quantidadeBlocosPorDia.value[diasSemana.findIndex(d => d.key === diaKey)];
+      const quantidade = quantidadeBlocosPorDia.value[diasSemana.value.findIndex(d => d.key === diaKey)];
 
       for (let i = 1; i <= quantidade; i++) {
         if (i === blocoNum) continue; // Pula o bloco atual
@@ -518,7 +518,7 @@ export default {
       const novosErros = {};
       const mensagens = [];
 
-      diasSemana.forEach((dia) => {
+      diasSemana.value.forEach((dia) => {
         if (!diasSemanaEscolhidos.value[dia.index]) return;
 
         const quantidade = quantidadeBlocosPorDia.value[dia.index];
