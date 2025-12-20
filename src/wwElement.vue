@@ -553,7 +553,8 @@ export default {
       }
 
       // Validar sobreposição com outros blocos do mesmo dia
-      const quantidade = quantidadeBlocosPorDia.value[diasSemana.value.findIndex(d => d.key === diaKey)];
+      const diaIndex = diasSemana.value.findIndex(d => d.key === diaKey);
+      const quantidade = quantidadeBlocosPorDia.value[diaIndex];
 
       for (let i = 1; i <= quantidade; i++) {
         if (i === blocoNum) continue; // Pula o bloco atual
@@ -566,10 +567,9 @@ export default {
         // Verifica sobreposição
         // Bloco atual começa durante outro bloco OU bloco atual termina durante outro bloco
         // OU bloco atual engloba outro bloco
-        if (
-          (inicio < outroTermino && termino > outroInicio)
-        ) {
-          return props.content?.msgErroSobreposicao || `Sobreposição com o bloco ${i}`;
+        if (inicio < outroTermino && termino > outroInicio) {
+          const msgBase = props.content?.msgErroSobreposicao || 'Sobreposição com o bloco';
+          return `${msgBase} ${i}`;
         }
       }
 
@@ -580,6 +580,16 @@ export default {
     const validarTodosOsBlocos = () => {
       const novosErros = {};
       const mensagens = [];
+
+      // Verificar se pelo menos um dia está selecionado
+      const algumDiaSelecionado = diasSemanaEscolhidos.value.some(dia => dia === true);
+
+      if (!algumDiaSelecionado) {
+        errosPorBloco.value = novosErros;
+        setMensagensErro(mensagens);
+        setValidacaoOk(false);
+        return;
+      }
 
       diasSemana.value.forEach((dia) => {
         if (!diasSemanaEscolhidos.value[dia.index]) return;
