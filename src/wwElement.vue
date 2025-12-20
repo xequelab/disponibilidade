@@ -564,7 +564,12 @@ export default {
         const outroInicio = blocos.value[diaKey]?.[`bloco_${i}_inicio`];
         const outroTermino = blocos.value[diaKey]?.[`bloco_${i}_termino`];
 
-        if (!outroInicio || !outroTermino) continue; // Pula blocos incompletos
+        console.log(`[Validação Sobreposição] Bloco ${i} - inicio: "${outroInicio}", termino: "${outroTermino}"`);
+
+        if (!outroInicio || !outroTermino) {
+          console.log(`[Validação Sobreposição] Bloco ${i} INCOMPLETO - pulando`);
+          continue; // Pula blocos incompletos
+        }
 
         console.log(`[Validação Sobreposição] Comparando com bloco ${i}: ${outroInicio} - ${outroTermino}`);
 
