@@ -557,6 +557,7 @@ export default {
       const quantidade = quantidadeBlocosPorDia.value[diaIndex];
 
       console.log(`[Validação Sobreposição] Validando bloco ${blocoNum} de ${diaKey}: ${inicio} - ${termino}`);
+      console.log(`[Validação Sobreposição] diaIndex: ${diaIndex}, quantidade de blocos: ${quantidade}`);
 
       for (let i = 1; i <= quantidade; i++) {
         if (i === blocoNum) continue; // Pula o bloco atual
