@@ -40,6 +40,21 @@
         v-if="diasSemanaEscolhidos[dia.index] && expandedDays.has(dia.index)"
         class="dia-conteudo"
       >
+        <!-- Barra de ações -->
+        <div class="acoes-dia">
+          <button
+            class="copiar-dia-button"
+            type="button"
+            @click="copiarDia(dia.index)"
+            title="Copiar horários deste dia para outros dias"
+          >
+            <svg viewBox="0 0 24 24" class="copy-icon">
+              <path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/>
+            </svg>
+            Copiar para outros dias
+          </button>
+        </div>
+
         <!-- Blocos de Horário -->
         <div class="blocos-horarios">
           <div
@@ -114,6 +129,64 @@
               <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
             </svg>
             Adicionar bloco
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Cópia -->
+    <div v-if="modalCopiarDia.visivel" class="modal-overlay" @click="fecharModalCopia">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Copiar horários</h3>
+          <button class="modal-close-button" type="button" @click="fecharModalCopia">
+            <svg viewBox="0 0 24 24" class="close-icon">
+              <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <p class="modal-description">
+            Selecione os dias para os quais deseja copiar a configuração de <strong>{{ diasSemana.find(d => d.index === modalCopiarDia.diaOrigem)?.label }}</strong>:
+          </p>
+
+          <div class="dias-destino-lista">
+            <div
+              v-for="dia in diasSemana"
+              :key="dia.index"
+              class="dia-destino-item"
+              :class="{
+                'origem': dia.index === modalCopiarDia.diaOrigem,
+                'selecionado': modalCopiarDia.diasDestino.includes(dia.index)
+              }"
+            >
+              <label class="dia-destino-label">
+                <input
+                  type="checkbox"
+                  class="dia-destino-checkbox"
+                  :checked="modalCopiarDia.diasDestino.includes(dia.index)"
+                  :disabled="dia.index === modalCopiarDia.diaOrigem"
+                  @change="toggleDiaDestino(dia.index)"
+                />
+                <span class="dia-destino-nome">{{ dia.label }}</span>
+                <span v-if="dia.index === modalCopiarDia.diaOrigem" class="badge-origem">(Origem)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="modal-button modal-button-cancel" type="button" @click="fecharModalCopia">
+            Cancelar
+          </button>
+          <button
+            class="modal-button modal-button-confirm"
+            type="button"
+            :disabled="modalCopiarDia.diasDestino.length === 0"
+            @click="confirmarCopia"
+          >
+            Copiar para {{ modalCopiarDia.diasDestino.length }} dia{{ modalCopiarDia.diasDestino.length !== 1 ? 's' : '' }}
           </button>
         </div>
       </div>
@@ -277,21 +350,25 @@ export default {
       if (newDiasSemana[diaIndex]) {
         expandedDays.value.add(diaIndex);
 
-        // Define quantidade padrão de blocos se for 0 (sempre começa com 1 bloco)
+        // Define quantidade padrão de blocos se for 0 (sempre começa com 2 blocos)
         if (quantidadeBlocosPorDia.value[diaIndex] === 0) {
           const newQuantidades = [...quantidadeBlocosPorDia.value];
-          newQuantidades[diaIndex] = 1;
+          newQuantidades[diaIndex] = 2;
           setQuantidadeBlocosPorDia(newQuantidades);
 
-          // Pré-preenche o primeiro bloco com valores padrão
+          // Pré-preenche os dois primeiros blocos com valores padrão
           const diaKey = diasSemana.value.find(d => d.index === diaIndex).key;
           const newBlocos = JSON.parse(JSON.stringify(blocos.value));
 
           const defaultBlock1Start = props.content?.defaultBlock1StartTime || '09:00';
           const defaultBlock1End = props.content?.defaultBlock1EndTime || '12:00';
+          const defaultBlock2Start = props.content?.defaultBlock2StartTime || '14:00';
+          const defaultBlock2End = props.content?.defaultBlock2EndTime || '18:00';
 
           newBlocos[diaKey].bloco_1_inicio = `${defaultBlock1Start}:00`;
           newBlocos[diaKey].bloco_1_termino = `${defaultBlock1End}:00`;
+          newBlocos[diaKey].bloco_2_inicio = `${defaultBlock2Start}:00`;
+          newBlocos[diaKey].bloco_2_termino = `${defaultBlock2End}:00`;
 
           setBlocos(newBlocos);
         }
@@ -357,20 +434,6 @@ export default {
       const newQuantidades = [...quantidadeBlocosPorDia.value];
       newQuantidades[diaIndex] = quantidadeAtual + 1;
       setQuantidadeBlocosPorDia(newQuantidades);
-
-      // Se estiver adicionando o segundo bloco, pré-preenche com valores padrão
-      if (quantidadeAtual === 1) {
-        const diaKey = diasSemana.value.find(d => d.index === diaIndex).key;
-        const newBlocos = JSON.parse(JSON.stringify(blocos.value));
-
-        const defaultBlock2Start = props.content?.defaultBlock2StartTime || '14:00';
-        const defaultBlock2End = props.content?.defaultBlock2EndTime || '18:00';
-
-        newBlocos[diaKey].bloco_2_inicio = `${defaultBlock2Start}:00`;
-        newBlocos[diaKey].bloco_2_termino = `${defaultBlock2End}:00`;
-
-        setBlocos(newBlocos);
-      }
     };
 
     // Remover um bloco
@@ -545,6 +608,94 @@ export default {
       return errosPorBloco.value[chave] || null;
     };
 
+    // State para modal de cópia
+    const modalCopiarDia = ref({
+      visivel: false,
+      diaOrigem: null,
+      diasDestino: []
+    });
+
+    // Copiar configuração de um dia para outros dias
+    const copiarDia = (diaIndex) => {
+      if (isEditing.value) return;
+
+      // Abre modal com o dia de origem
+      modalCopiarDia.value = {
+        visivel: true,
+        diaOrigem: diaIndex,
+        diasDestino: []
+      };
+    };
+
+    // Fechar modal de cópia
+    const fecharModalCopia = () => {
+      modalCopiarDia.value = {
+        visivel: false,
+        diaOrigem: null,
+        diasDestino: []
+      };
+    };
+
+    // Toggle seleção de dia destino
+    const toggleDiaDestino = (diaIndex) => {
+      const index = modalCopiarDia.value.diasDestino.indexOf(diaIndex);
+      if (index > -1) {
+        modalCopiarDia.value.diasDestino.splice(index, 1);
+      } else {
+        modalCopiarDia.value.diasDestino.push(diaIndex);
+      }
+    };
+
+    // Confirmar cópia para dias selecionados
+    const confirmarCopia = () => {
+      const diaOrigem = modalCopiarDia.value.diaOrigem;
+      const diasDestino = modalCopiarDia.value.diasDestino;
+
+      if (diasDestino.length === 0) {
+        fecharModalCopia();
+        return;
+      }
+
+      const diaKeyOrigem = diasSemana.value.find(d => d.index === diaOrigem).key;
+      const quantidadeOrigem = quantidadeBlocosPorDia.value[diaOrigem];
+
+      // Clona dados do dia de origem
+      const newQuantidades = [...quantidadeBlocosPorDia.value];
+      const newBlocos = JSON.parse(JSON.stringify(blocos.value));
+      const newDiasSemana = [...diasSemanaEscolhidos.value];
+
+      // Copia para cada dia destino
+      diasDestino.forEach(diaDestino => {
+        const diaKeyDestino = diasSemana.value.find(d => d.index === diaDestino).key;
+
+        // Marca o dia como selecionado
+        newDiasSemana[diaDestino] = true;
+
+        // Expande automaticamente
+        expandedDays.value.add(diaDestino);
+
+        // Copia quantidade de blocos
+        newQuantidades[diaDestino] = quantidadeOrigem;
+
+        // Copia todos os horários
+        for (let i = 1; i <= 6; i++) {
+          newBlocos[diaKeyDestino][`bloco_${i}_inicio`] = newBlocos[diaKeyOrigem][`bloco_${i}_inicio`] || '';
+          newBlocos[diaKeyDestino][`bloco_${i}_termino`] = newBlocos[diaKeyOrigem][`bloco_${i}_termino`] || '';
+        }
+      });
+
+      // Atualiza variáveis
+      setDiasSemanaEscolhidos(newDiasSemana);
+      setQuantidadeBlocosPorDia(newQuantidades);
+      setBlocos(newBlocos);
+
+      // Valida após copiar
+      setTimeout(() => validarTodosOsBlocos(), 100);
+
+      // Fecha modal
+      fecharModalCopia();
+    };
+
     return {
       cssVars,
       diasSemana,
@@ -561,7 +712,12 @@ export default {
       updateBlocoInicio,
       updateBlocoTermino,
       formatTimeInput,
-      getErroBloco
+      getErroBloco,
+      copiarDia,
+      modalCopiarDia,
+      fecharModalCopia,
+      toggleDiaDestino,
+      confirmarCopia
     };
   }
 };
@@ -839,6 +995,233 @@ export default {
   .add-icon {
     width: 18px;
     height: 18px;
+  }
+}
+
+.acoes-dia {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.copiar-dia-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: transparent;
+  color: var(--header-bg-color, #1e3a5f);
+  border: 1px solid var(--header-bg-color, #1e3a5f);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--header-bg-color, #1e3a5f);
+    color: var(--header-text-color, #ffffff);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .copy-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Modal styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+
+  .close-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-description {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+
+  strong {
+    color: var(--header-bg-color, #1e3a5f);
+    font-weight: 600;
+  }
+}
+
+.dias-destino-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dia-destino-item {
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  &.origem {
+    opacity: 0.5;
+    background-color: #f5f5f5;
+  }
+
+  &.selecionado:not(.origem) {
+    border-color: var(--header-bg-color, #1e3a5f);
+    background-color: rgba(30, 58, 95, 0.05);
+  }
+
+  &:hover:not(.origem) {
+    border-color: var(--header-bg-color, #1e3a5f);
+  }
+}
+
+.dia-destino-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+
+  .origem & {
+    cursor: not-allowed;
+  }
+}
+
+.dia-destino-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--header-bg-color, #1e3a5f);
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.dia-destino-nome {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.badge-origem {
+  font-size: 12px;
+  color: #666;
+  font-weight: 400;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.modal-button-cancel {
+  background-color: transparent;
+  color: #666;
+  border: 1px solid var(--border-color, #e0e0e0);
+
+  &:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
+  }
+}
+
+.modal-button-confirm {
+  background-color: var(--header-bg-color, #1e3a5f);
+  color: var(--header-text-color, #ffffff);
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 </style>
