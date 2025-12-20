@@ -1,17 +1,13 @@
 export default {
   editor: {
-    label: {
-      pt: 'Disponibilidade Semanal'
-    },
+    label: 'Disponibilidade Semanal',
     icon: 'calendar'
   },
 
   triggerEvents: [
     {
       name: 'disponibilidadeChange',
-      label: {
-        pt: 'Ao mudar disponibilidade'
-      },
+      label: 'Ao mudar disponibilidade',
       event: {
         diaIndex: 0,
         diaKey: 'segunda',
@@ -23,9 +19,7 @@ export default {
   properties: {
     // Cores e Estilos
     headerBackgroundColor: {
-      label: {
-        pt: 'Cor de Fundo do Cabeçalho Selecionado'
-      },
+      label: 'Cor de Fundo do Cabeçalho Selecionado',
       type: 'Color',
       section: 'style',
       bindable: true,
@@ -45,9 +39,7 @@ export default {
     },
 
     headerTextColor: {
-      label: {
-        pt: 'Cor do Texto do Cabeçalho Selecionado'
-      },
+      label: 'Cor do Texto do Cabeçalho Selecionado',
       type: 'Color',
       section: 'style',
       bindable: true,
@@ -67,9 +59,7 @@ export default {
     },
 
     checkboxCheckedColor: {
-      label: {
-        pt: 'Cor do Checkbox Marcado'
-      },
+      label: 'Cor do Checkbox Marcado',
       type: 'Color',
       section: 'style',
       bindable: true,
@@ -89,9 +79,7 @@ export default {
     },
 
     contentBackgroundColor: {
-      label: {
-        pt: 'Cor de Fundo do Conteúdo'
-      },
+      label: 'Cor de Fundo do Conteúdo',
       type: 'Color',
       section: 'style',
       bindable: true,
@@ -111,9 +99,7 @@ export default {
     },
 
     borderColor: {
-      label: {
-        pt: 'Cor da Borda'
-      },
+      label: 'Cor da Borda',
       type: 'Color',
       section: 'style',
       bindable: true,
@@ -133,9 +119,7 @@ export default {
     },
 
     inputBorderColor: {
-      label: {
-        pt: 'Cor da Borda dos Inputs'
-      },
+      label: 'Cor da Borda dos Inputs',
       type: 'Color',
       section: 'style',
       bindable: true,
@@ -155,9 +139,7 @@ export default {
     },
 
     inputFocusBorderColor: {
-      label: {
-        pt: 'Cor da Borda dos Inputs em Foco'
-      },
+      label: 'Cor da Borda dos Inputs em Foco',
       type: 'Color',
       section: 'style',
       bindable: true,
@@ -178,9 +160,7 @@ export default {
 
     // Espaçamentos
     dayGap: {
-      label: {
-        pt: 'Espaçamento Entre Dias'
-      },
+      label: 'Espaçamento Entre Dias',
       type: 'Length',
       section: 'style',
       bindable: true,
@@ -202,9 +182,7 @@ export default {
     },
 
     blockGap: {
-      label: {
-        pt: 'Espaçamento Entre Blocos de Horário'
-      },
+      label: 'Espaçamento Entre Blocos de Horário',
       type: 'Length',
       section: 'style',
       bindable: true,
@@ -227,9 +205,7 @@ export default {
 
     // Labels Customizáveis
     labelDomingo: {
-      label: {
-        pt: 'Label Domingo'
-      },
+      label: 'Label Domingo',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -247,9 +223,7 @@ export default {
     },
 
     labelSegunda: {
-      label: {
-        pt: 'Label Segunda-feira'
-      },
+      label: 'Label Segunda-feira',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -267,9 +241,7 @@ export default {
     },
 
     labelTerca: {
-      label: {
-        pt: 'Label Terça-feira'
-      },
+      label: 'Label Terça-feira',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -287,9 +259,7 @@ export default {
     },
 
     labelQuarta: {
-      label: {
-        pt: 'Label Quarta-feira'
-      },
+      label: 'Label Quarta-feira',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -307,9 +277,7 @@ export default {
     },
 
     labelQuinta: {
-      label: {
-        pt: 'Label Quinta-feira'
-      },
+      label: 'Label Quinta-feira',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -327,9 +295,7 @@ export default {
     },
 
     labelSexta: {
-      label: {
-        pt: 'Label Sexta-feira'
-      },
+      label: 'Label Sexta-feira',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -347,9 +313,7 @@ export default {
     },
 
     labelSabado: {
-      label: {
-        pt: 'Label Sábado'
-      },
+      label: 'Label Sábado',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -367,9 +331,7 @@ export default {
     },
 
     labelDisponivelBadge: {
-      label: {
-        pt: 'Label Badge Disponível'
-      },
+      label: 'Label Badge Disponível',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -387,9 +349,7 @@ export default {
     },
 
     labelHorarioInicio: {
-      label: {
-        pt: 'Label Horário de Início'
-      },
+      label: 'Label Horário de Início',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -407,9 +367,7 @@ export default {
     },
 
     labelHorarioTermino: {
-      label: {
-        pt: 'Label Horário de Término'
-      },
+      label: 'Label Horário de Término',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -428,9 +386,7 @@ export default {
 
     // Horários Padrão
     defaultBlock1StartTime: {
-      label: {
-        pt: 'Horário Padrão Início Bloco 1'
-      },
+      label: 'Horário Padrão Início Bloco 1',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -447,9 +403,7 @@ export default {
     },
 
     defaultBlock1EndTime: {
-      label: {
-        pt: 'Horário Padrão Término Bloco 1'
-      },
+      label: 'Horário Padrão Término Bloco 1',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -466,9 +420,7 @@ export default {
     },
 
     defaultBlock2StartTime: {
-      label: {
-        pt: 'Horário Padrão Início Bloco 2'
-      },
+      label: 'Horário Padrão Início Bloco 2',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -485,9 +437,7 @@ export default {
     },
 
     defaultBlock2EndTime: {
-      label: {
-        pt: 'Horário Padrão Término Bloco 2'
-      },
+      label: 'Horário Padrão Término Bloco 2',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -504,9 +454,7 @@ export default {
     },
 
     autoExpand: {
-      label: {
-        pt: 'Expandir Automaticamente Dias Selecionados'
-      },
+      label: 'Expandir Automaticamente Dias Selecionados',
       type: 'OnOff',
       section: 'settings',
       bindable: true,
@@ -524,9 +472,7 @@ export default {
 
     // Mensagens de Validação
     msgErroBlocoIncompleto: {
-      label: {
-        pt: 'Mensagem Erro Bloco Incompleto'
-      },
+      label: 'Mensagem Erro Bloco Incompleto',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -544,9 +490,7 @@ export default {
     },
 
     msgErroTerminoMenorInicio: {
-      label: {
-        pt: 'Mensagem Erro Término Antes de Início'
-      },
+      label: 'Mensagem Erro Término Antes de Início',
       type: 'Text',
       section: 'settings',
       bindable: true,
@@ -564,9 +508,7 @@ export default {
     },
 
     msgErroSobreposicao: {
-      label: {
-        pt: 'Mensagem Erro Sobreposição'
-      },
+      label: 'Mensagem Erro Sobreposição',
       type: 'Text',
       section: 'settings',
       bindable: true,
