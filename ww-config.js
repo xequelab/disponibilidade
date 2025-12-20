@@ -493,6 +493,87 @@ export default {
       /* wwEditor:end */
     },
 
+    // Horários Padrão
+    defaultBlock1StartTime: {
+      label: {
+        en: 'Default Block 1 Start Time',
+        pt: 'Horário Padrão Início Bloco 1'
+      },
+      type: 'Text',
+      section: 'settings',
+      bindable: true,
+      defaultValue: '09:00',
+      /* wwEditor:start */
+      bindingValidation: {
+        type: 'string',
+        tooltip: 'Default start time for first block (format: HH:MM)'
+      },
+      propertyHelp: {
+        tooltip: 'Pre-fill first block start time (e.g., "09:00")'
+      }
+      /* wwEditor:end */
+    },
+
+    defaultBlock1EndTime: {
+      label: {
+        en: 'Default Block 1 End Time',
+        pt: 'Horário Padrão Término Bloco 1'
+      },
+      type: 'Text',
+      section: 'settings',
+      bindable: true,
+      defaultValue: '12:00',
+      /* wwEditor:start */
+      bindingValidation: {
+        type: 'string',
+        tooltip: 'Default end time for first block (format: HH:MM)'
+      },
+      propertyHelp: {
+        tooltip: 'Pre-fill first block end time (e.g., "12:00")'
+      }
+      /* wwEditor:end */
+    },
+
+    defaultBlock2StartTime: {
+      label: {
+        en: 'Default Block 2 Start Time',
+        pt: 'Horário Padrão Início Bloco 2'
+      },
+      type: 'Text',
+      section: 'settings',
+      bindable: true,
+      defaultValue: '14:00',
+      /* wwEditor:start */
+      bindingValidation: {
+        type: 'string',
+        tooltip: 'Default start time for second block (format: HH:MM)'
+      },
+      propertyHelp: {
+        tooltip: 'Pre-fill second block start time (e.g., "14:00")'
+      }
+      /* wwEditor:end */
+    },
+
+    defaultBlock2EndTime: {
+      label: {
+        en: 'Default Block 2 End Time',
+        pt: 'Horário Padrão Término Bloco 2'
+      },
+      type: 'Text',
+      section: 'settings',
+      bindable: true,
+      defaultValue: '18:00',
+      /* wwEditor:start */
+      bindingValidation: {
+        type: 'string',
+        tooltip: 'Default end time for second block (format: HH:MM)'
+      },
+      propertyHelp: {
+        tooltip: 'Pre-fill second block end time (e.g., "18:00")'
+      }
+      /* wwEditor:end */
+    },
+
     autoExpand: {
       label: {
         en: 'Auto Expand Selected Days',

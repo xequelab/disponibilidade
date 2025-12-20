@@ -40,25 +40,6 @@
         v-if="diasSemanaEscolhidos[dia.index] && expandedDays.has(dia.index)"
         class="dia-conteudo"
       >
-        <!-- Seletor de Quantidade de Blocos -->
-        <div class="blocos-selector">
-          <label class="selector-label">
-            Em quantos blocos você quer dividir a disponibilidade de {{ dia.label.toLowerCase() }}?
-          </label>
-          <select
-            v-model.number="quantidadeBlocosPorDia[dia.index]"
-            class="blocos-select"
-            @change="updateQuantidadeBlocos(dia.index, $event.target.value)"
-          >
-            <option :value="1">1</option>
-            <option :value="2">2</option>
-            <option :value="3">3</option>
-            <option :value="4">4</option>
-            <option :value="5">5</option>
-            <option :value="6">6</option>
-          </select>
-        </div>
-
         <!-- Blocos de Horário -->
         <div class="blocos-horarios">
           <div
@@ -67,37 +48,52 @@
             class="bloco-horario-wrapper"
           >
             <div class="bloco-horario">
-              <div class="horario-field">
-                <label class="field-label">Horário de início</label>
-                <div class="time-input-wrapper">
-                  <input
-                    type="time"
-                    class="time-input"
-                    :value="getBlocoInicio(dia.key, blocoNum)"
-                    @input="(e) => updateBlocoInicio(dia.key, blocoNum, e.target.value)"
-                    @change="(e) => formatTimeInput(dia.key, blocoNum, 'inicio', e.target.value)"
-                  />
-                  <svg class="clock-icon" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
-                  </svg>
+              <div class="bloco-campos">
+                <div class="horario-field">
+                  <label class="field-label">Horário de início</label>
+                  <div class="time-input-wrapper">
+                    <input
+                      type="time"
+                      class="time-input"
+                      :value="getBlocoInicio(dia.key, blocoNum)"
+                      @input="(e) => updateBlocoInicio(dia.key, blocoNum, e.target.value)"
+                      @change="(e) => formatTimeInput(dia.key, blocoNum, 'inicio', e.target.value)"
+                    />
+                    <svg class="clock-icon" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="horario-field">
+                  <label class="field-label">Horário de Término</label>
+                  <div class="time-input-wrapper">
+                    <input
+                      type="time"
+                      class="time-input"
+                      :value="getBlocoTermino(dia.key, blocoNum)"
+                      @input="(e) => updateBlocoTermino(dia.key, blocoNum, e.target.value)"
+                      @change="(e) => formatTimeInput(dia.key, blocoNum, 'termino', e.target.value)"
+                    />
+                    <svg class="clock-icon" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
+                    </svg>
+                  </div>
                 </div>
               </div>
 
-              <div class="horario-field">
-                <label class="field-label">Horário de Término</label>
-                <div class="time-input-wrapper">
-                  <input
-                    type="time"
-                    class="time-input"
-                    :value="getBlocoTermino(dia.key, blocoNum)"
-                    @input="(e) => updateBlocoTermino(dia.key, blocoNum, e.target.value)"
-                    @change="(e) => formatTimeInput(dia.key, blocoNum, 'termino', e.target.value)"
-                  />
-                  <svg class="clock-icon" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z" />
-                  </svg>
-                </div>
-              </div>
+              <!-- Botão de remover bloco (apenas se não for o primeiro bloco) -->
+              <button
+                v-if="blocoNum > 1"
+                class="remove-block-button"
+                type="button"
+                @click="removeBloco(dia.index, blocoNum)"
+                title="Remover bloco"
+              >
+                <svg viewBox="0 0 24 24" class="remove-icon">
+                  <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                </svg>
+              </button>
             </div>
 
             <!-- Mensagem de Erro -->
@@ -105,6 +101,19 @@
               {{ getErroBloco(dia.key, blocoNum) }}
             </div>
           </div>
+
+          <!-- Botão de adicionar bloco -->
+          <button
+            v-if="quantidadeBlocosPorDia[dia.index] < 6"
+            class="add-block-button"
+            type="button"
+            @click="addBloco(dia.index)"
+          >
+            <svg viewBox="0 0 24 24" class="add-icon">
+              <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+            </svg>
+            Adicionar bloco
+          </button>
         </div>
       </div>
     </div>
@@ -232,11 +241,23 @@ export default {
       if (newDiasSemana[diaIndex]) {
         expandedDays.value.add(diaIndex);
 
-        // Define quantidade padrão de blocos se for 0
+        // Define quantidade padrão de blocos se for 0 (sempre começa com 1 bloco)
         if (quantidadeBlocosPorDia.value[diaIndex] === 0) {
           const newQuantidades = [...quantidadeBlocosPorDia.value];
-          newQuantidades[diaIndex] = 2;
+          newQuantidades[diaIndex] = 1;
           setQuantidadeBlocosPorDia(newQuantidades);
+
+          // Pré-preenche o primeiro bloco com valores padrão
+          const diaKey = diasSemana.find(d => d.index === diaIndex).key;
+          const newBlocos = JSON.parse(JSON.stringify(blocos.value));
+
+          const defaultBlock1Start = props.content?.defaultBlock1StartTime || '09:00';
+          const defaultBlock1End = props.content?.defaultBlock1EndTime || '12:00';
+
+          newBlocos[diaKey].bloco_1_inicio = `${defaultBlock1Start}:00`;
+          newBlocos[diaKey].bloco_1_termino = `${defaultBlock1End}:00`;
+
+          setBlocos(newBlocos);
         }
       } else {
         // Se desmarcou, remove da expansão e zera blocos
@@ -247,7 +268,7 @@ export default {
         setQuantidadeBlocosPorDia(newQuantidades);
 
         // Limpa os horários do dia
-        const diaKey = diasSemana[diaIndex].key;
+        const diaKey = diasSemana.find(d => d.index === diaIndex).key;
         const newBlocos = { ...blocos.value };
         newBlocos[diaKey] = {
           bloco_1_inicio: '',
@@ -271,7 +292,7 @@ export default {
         name: 'disponibilidadeChange',
         event: {
           diaIndex,
-          diaKey: diasSemana[diaIndex].key,
+          diaKey: diasSemana.find(d => d.index === diaIndex).key,
           selecionado: newDiasSemana[diaIndex]
         }
       });
@@ -288,22 +309,68 @@ export default {
       }
     };
 
-    // Atualizar quantidade de blocos
-    const updateQuantidadeBlocos = (diaIndex, quantidade) => {
+    // Adicionar um novo bloco
+    const addBloco = (diaIndex) => {
       if (isEditing.value) return;
 
+      const quantidadeAtual = quantidadeBlocosPorDia.value[diaIndex];
+
+      // Verifica se já não atingiu o limite
+      if (quantidadeAtual >= 6) return;
+
       const newQuantidades = [...quantidadeBlocosPorDia.value];
-      newQuantidades[diaIndex] = parseInt(quantidade);
+      newQuantidades[diaIndex] = quantidadeAtual + 1;
       setQuantidadeBlocosPorDia(newQuantidades);
 
-      // Limpar blocos que não são mais usados
-      const diaKey = diasSemana[diaIndex].key;
-      const newBlocos = { ...blocos.value };
-      for (let i = parseInt(quantidade) + 1; i <= 6; i++) {
-        newBlocos[diaKey][`bloco_${i}_inicio`] = '';
-        newBlocos[diaKey][`bloco_${i}_termino`] = '';
+      // Se estiver adicionando o segundo bloco, pré-preenche com valores padrão
+      if (quantidadeAtual === 1) {
+        const diaKey = diasSemana.find(d => d.index === diaIndex).key;
+        const newBlocos = JSON.parse(JSON.stringify(blocos.value));
+
+        const defaultBlock2Start = props.content?.defaultBlock2StartTime || '14:00';
+        const defaultBlock2End = props.content?.defaultBlock2EndTime || '18:00';
+
+        newBlocos[diaKey].bloco_2_inicio = `${defaultBlock2Start}:00`;
+        newBlocos[diaKey].bloco_2_termino = `${defaultBlock2End}:00`;
+
+        setBlocos(newBlocos);
       }
+    };
+
+    // Remover um bloco
+    const removeBloco = (diaIndex, blocoNum) => {
+      if (isEditing.value) return;
+
+      // Não permite remover o primeiro bloco
+      if (blocoNum === 1) return;
+
+      const quantidadeAtual = quantidadeBlocosPorDia.value[diaIndex];
+
+      // Não permite deixar sem blocos se o dia está selecionado
+      if (quantidadeAtual <= 1) return;
+
+      const diaKey = diasSemana.find(d => d.index === diaIndex).key;
+      const newBlocos = JSON.parse(JSON.stringify(blocos.value));
+
+      // Move os blocos subsequentes para cima
+      for (let i = blocoNum; i < quantidadeAtual; i++) {
+        newBlocos[diaKey][`bloco_${i}_inicio`] = newBlocos[diaKey][`bloco_${i + 1}_inicio`] || '';
+        newBlocos[diaKey][`bloco_${i}_termino`] = newBlocos[diaKey][`bloco_${i + 1}_termino`] || '';
+      }
+
+      // Limpa o último bloco
+      newBlocos[diaKey][`bloco_${quantidadeAtual}_inicio`] = '';
+      newBlocos[diaKey][`bloco_${quantidadeAtual}_termino`] = '';
+
       setBlocos(newBlocos);
+
+      // Atualiza a quantidade
+      const newQuantidades = [...quantidadeBlocosPorDia.value];
+      newQuantidades[diaIndex] = quantidadeAtual - 1;
+      setQuantidadeBlocosPorDia(newQuantidades);
+
+      // Revalidar após remover
+      setTimeout(() => validarTodosOsBlocos(), 100);
     };
 
     // Obter valor de início do bloco
@@ -450,7 +517,8 @@ export default {
       expandedDays,
       toggleDiaSelection,
       toggleDiaExpansion,
-      updateQuantidadeBlocos,
+      addBloco,
+      removeBloco,
       getBlocoInicio,
       getBlocoTermino,
       updateBlocoInicio,
@@ -575,33 +643,6 @@ export default {
   border-top: 1px solid #e0e0e0;
 }
 
-.blocos-selector {
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.selector-label {
-  font-size: 14px;
-  color: #333;
-}
-
-.blocos-select {
-  width: 200px;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #ffffff;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #1e3a5f;
-  }
-}
-
 .blocos-horarios {
   display: flex;
   flex-direction: column;
@@ -609,6 +650,18 @@ export default {
 }
 
 .bloco-horario {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  position: relative;
+}
+
+.bloco-campos {
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
@@ -682,5 +735,65 @@ export default {
   font-size: 13px;
   color: #d32f2f;
   font-weight: 500;
+}
+
+.remove-block-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d32f2f;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  margin-top: 20px;
+
+  &:hover {
+    background-color: #fee;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .remove-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.add-block-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #1e3a5f;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+
+  &:hover {
+    background-color: #2a4a75;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .add-icon {
+    width: 18px;
+    height: 18px;
+  }
 }
 </style>
