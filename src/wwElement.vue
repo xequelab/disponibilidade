@@ -1,5 +1,5 @@
 <template>
-  <div class="disponibilidade-semanal">
+  <div class="disponibilidade-semanal" :style="cssVars">
     <div v-for="dia in diasSemana" :key="dia.index" class="dia-container">
       <!-- Header do Dia -->
       <div
@@ -82,7 +82,7 @@
                 </div>
               </div>
 
-              <!-- Botão de remover bloco (apenas se não for o primeiro bloco) -->
+              <!-- Botão de remover bloco ou espaçador -->
               <button
                 v-if="blocoNum > 1"
                 class="remove-block-button"
@@ -94,6 +94,7 @@
                   <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
                 </svg>
               </button>
+              <div v-else class="remove-block-spacer"></div>
             </div>
 
             <!-- Mensagem de Erro -->
@@ -150,6 +151,19 @@ export default {
       /* wwEditor:end */
       return false;
     });
+
+    // CSS Variables dinâmicas baseadas nas props do editor
+    const cssVars = computed(() => ({
+      '--header-bg-color': props.content?.headerBackgroundColor || '#1e3a5f',
+      '--header-text-color': props.content?.headerTextColor || '#ffffff',
+      '--checkbox-checked-color': props.content?.checkboxCheckedColor || '#4caf50',
+      '--content-bg-color': props.content?.contentBackgroundColor || '#fafafa',
+      '--border-color': props.content?.borderColor || '#e0e0e0',
+      '--input-border-color': props.content?.inputBorderColor || '#ccc',
+      '--input-focus-border-color': props.content?.inputFocusBorderColor || '#1e3a5f',
+      '--day-gap': props.content?.dayGap || '8px',
+      '--block-gap': props.content?.blockGap || '16px'
+    }));
 
     // Definição dos dias da semana
     // index: posição nas variáveis diasSemanaEscolhidos e quantidadeBlocosPorDia (0=domingo, 1=segunda, ...)
@@ -221,6 +235,28 @@ export default {
       name: 'mensagensErro',
       type: 'array',
       defaultValue: []
+    });
+
+    // Variáveis expostas para mensagens de erro configuradas no editor
+    const { value: msgErroBlocoIncompleto } = wwLib.wwVariable.useComponentVariable({
+      uid: props.uid,
+      name: 'msgErroBlocoIncompleto',
+      type: 'string',
+      defaultValue: computed(() => props.content?.msgErroBlocoIncompleto || 'Preencha tanto o horário de início quanto o de término')
+    });
+
+    const { value: msgErroTerminoMenorInicio } = wwLib.wwVariable.useComponentVariable({
+      uid: props.uid,
+      name: 'msgErroTerminoMenorInicio',
+      type: 'string',
+      defaultValue: computed(() => props.content?.msgErroTerminoMenorInicio || 'O horário de término deve ser maior que o de início')
+    });
+
+    const { value: msgErroSobreposicao } = wwLib.wwVariable.useComponentVariable({
+      uid: props.uid,
+      name: 'msgErroSobreposicao',
+      type: 'string',
+      defaultValue: computed(() => props.content?.msgErroSobreposicao || 'Sobreposição com o bloco')
     });
 
     // State interno para controle de expansão
@@ -510,6 +546,7 @@ export default {
     };
 
     return {
+      cssVars,
       diasSemana,
       diasSemanaEscolhidos,
       quantidadeBlocosPorDia,
@@ -535,11 +572,11 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--day-gap, 8px);
 }
 
 .dia-container {
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -558,11 +595,11 @@ export default {
   }
 
   &.dia-selecionado {
-    background-color: #1e3a5f;
-    color: #ffffff;
+    background-color: var(--header-bg-color, #1e3a5f);
+    color: var(--header-text-color, #ffffff);
 
     &:hover {
-      background-color: #2a4a75;
+      opacity: 0.95;
     }
   }
 }
@@ -591,8 +628,8 @@ export default {
   transition: all 0.2s ease;
 
   &.checked {
-    background-color: #4caf50;
-    border-color: #4caf50;
+    background-color: var(--checkbox-checked-color, #4caf50);
+    border-color: var(--checkbox-checked-color, #4caf50);
   }
 
   .checkmark {
@@ -639,14 +676,14 @@ export default {
 
 .dia-conteudo {
   padding: 24px 16px;
-  background-color: #fafafa;
-  border-top: 1px solid #e0e0e0;
+  background-color: var(--content-bg-color, #fafafa);
+  border-top: 1px solid var(--border-color, #e0e0e0);
 }
 
 .blocos-horarios {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--block-gap, 16px);
 }
 
 .bloco-horario {
@@ -655,7 +692,7 @@ export default {
   gap: 12px;
   padding: 16px;
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 6px;
   position: relative;
 }
@@ -692,14 +729,14 @@ export default {
 .time-input {
   width: 100%;
   padding: 10px 40px 10px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border-color, #ccc);
   border-radius: 4px;
   font-size: 16px;
   background-color: #ffffff;
 
   &:focus {
     outline: none;
-    border-color: #1e3a5f;
+    border-color: var(--input-focus-border-color, #1e3a5f);
   }
 
   &::-webkit-calendar-picker-indicator {
@@ -750,6 +787,7 @@ export default {
   transition: all 0.2s ease;
   align-self: flex-start;
   margin-top: 20px;
+  flex-shrink: 0;
 
   &:hover {
     background-color: #fee;
@@ -765,14 +803,21 @@ export default {
   }
 }
 
+.remove-block-spacer {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  margin-top: 20px;
+}
+
 .add-block-button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 12px 16px;
-  background-color: #1e3a5f;
-  color: #ffffff;
+  background-color: var(--header-bg-color, #1e3a5f);
+  color: var(--header-text-color, #ffffff);
   border: none;
   border-radius: 6px;
   font-size: 14px;
@@ -782,7 +827,7 @@ export default {
   margin-top: 8px;
 
   &:hover {
-    background-color: #2a4a75;
+    opacity: 0.9;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }

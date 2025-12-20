@@ -1,7 +1,6 @@
 export default {
   editor: {
     label: {
-      en: 'Weekly Availability',
       pt: 'Disponibilidade Semanal'
     },
     icon: 'calendar'
@@ -11,7 +10,6 @@ export default {
     {
       name: 'disponibilidadeChange',
       label: {
-        en: 'On availability change',
         pt: 'Ao mudar disponibilidade'
       },
       event: {
@@ -26,7 +24,6 @@ export default {
     // Cores e Estilos
     headerBackgroundColor: {
       label: {
-        en: 'Selected Day Header Background',
         pt: 'Cor de Fundo do Cabeçalho Selecionado'
       },
       type: 'Color',
@@ -49,7 +46,6 @@ export default {
 
     headerTextColor: {
       label: {
-        en: 'Selected Day Header Text Color',
         pt: 'Cor do Texto do Cabeçalho Selecionado'
       },
       type: 'Color',
@@ -72,7 +68,6 @@ export default {
 
     checkboxCheckedColor: {
       label: {
-        en: 'Checkbox Checked Color',
         pt: 'Cor do Checkbox Marcado'
       },
       type: 'Color',
@@ -95,7 +90,6 @@ export default {
 
     contentBackgroundColor: {
       label: {
-        en: 'Content Background Color',
         pt: 'Cor de Fundo do Conteúdo'
       },
       type: 'Color',
@@ -118,7 +112,6 @@ export default {
 
     borderColor: {
       label: {
-        en: 'Border Color',
         pt: 'Cor da Borda'
       },
       type: 'Color',
@@ -141,7 +134,6 @@ export default {
 
     inputBorderColor: {
       label: {
-        en: 'Input Border Color',
         pt: 'Cor da Borda dos Inputs'
       },
       type: 'Color',
@@ -164,7 +156,6 @@ export default {
 
     inputFocusBorderColor: {
       label: {
-        en: 'Input Focus Border Color',
         pt: 'Cor da Borda dos Inputs em Foco'
       },
       type: 'Color',
@@ -188,7 +179,6 @@ export default {
     // Espaçamentos
     dayGap: {
       label: {
-        en: 'Gap Between Days',
         pt: 'Espaçamento Entre Dias'
       },
       type: 'Length',
@@ -213,7 +203,6 @@ export default {
 
     blockGap: {
       label: {
-        en: 'Gap Between Time Blocks',
         pt: 'Espaçamento Entre Blocos de Horário'
       },
       type: 'Length',
@@ -239,7 +228,6 @@ export default {
     // Labels Customizáveis
     labelDomingo: {
       label: {
-        en: 'Sunday Label',
         pt: 'Label Domingo'
       },
       type: 'Text',
@@ -260,7 +248,6 @@ export default {
 
     labelSegunda: {
       label: {
-        en: 'Monday Label',
         pt: 'Label Segunda-feira'
       },
       type: 'Text',
@@ -281,7 +268,6 @@ export default {
 
     labelTerca: {
       label: {
-        en: 'Tuesday Label',
         pt: 'Label Terça-feira'
       },
       type: 'Text',
@@ -302,7 +288,6 @@ export default {
 
     labelQuarta: {
       label: {
-        en: 'Wednesday Label',
         pt: 'Label Quarta-feira'
       },
       type: 'Text',
@@ -323,7 +308,6 @@ export default {
 
     labelQuinta: {
       label: {
-        en: 'Thursday Label',
         pt: 'Label Quinta-feira'
       },
       type: 'Text',
@@ -344,7 +328,6 @@ export default {
 
     labelSexta: {
       label: {
-        en: 'Friday Label',
         pt: 'Label Sexta-feira'
       },
       type: 'Text',
@@ -365,7 +348,6 @@ export default {
 
     labelSabado: {
       label: {
-        en: 'Saturday Label',
         pt: 'Label Sábado'
       },
       type: 'Text',
@@ -386,7 +368,6 @@ export default {
 
     labelDisponivelBadge: {
       label: {
-        en: 'Available Badge Label',
         pt: 'Label Badge Disponível'
       },
       type: 'Text',
@@ -405,30 +386,8 @@ export default {
       /* wwEditor:end */
     },
 
-    labelBlocosSelector: {
-      label: {
-        en: 'Blocks Selector Label',
-        pt: 'Label Seletor de Blocos'
-      },
-      type: 'Text',
-      section: 'settings',
-      bindable: true,
-      multiLang: true,
-      defaultValue: 'Em quantos blocos você quer dividir a disponibilidade de',
-      /* wwEditor:start */
-      bindingValidation: {
-        type: 'string',
-        tooltip: 'Label for blocks quantity selector'
-      },
-      propertyHelp: {
-        tooltip: 'Text asking how many blocks to divide availability into'
-      }
-      /* wwEditor:end */
-    },
-
     labelHorarioInicio: {
       label: {
-        en: 'Start Time Label',
         pt: 'Label Horário de Início'
       },
       type: 'Text',
@@ -449,7 +408,6 @@ export default {
 
     labelHorarioTermino: {
       label: {
-        en: 'End Time Label',
         pt: 'Label Horário de Término'
       },
       type: 'Text',
@@ -468,35 +426,9 @@ export default {
       /* wwEditor:end */
     },
 
-    // Comportamento
-    defaultBlocksQuantity: {
-      label: {
-        en: 'Default Blocks Quantity',
-        pt: 'Quantidade Padrão de Blocos'
-      },
-      type: 'Number',
-      section: 'settings',
-      bindable: true,
-      defaultValue: 2,
-      options: {
-        min: 1,
-        max: 6
-      },
-      /* wwEditor:start */
-      bindingValidation: {
-        type: 'number',
-        tooltip: 'Default number of time blocks when selecting a day (1-6)'
-      },
-      propertyHelp: {
-        tooltip: 'How many blocks are selected by default when enabling a day'
-      }
-      /* wwEditor:end */
-    },
-
     // Horários Padrão
     defaultBlock1StartTime: {
       label: {
-        en: 'Default Block 1 Start Time',
         pt: 'Horário Padrão Início Bloco 1'
       },
       type: 'Text',
@@ -516,7 +448,6 @@ export default {
 
     defaultBlock1EndTime: {
       label: {
-        en: 'Default Block 1 End Time',
         pt: 'Horário Padrão Término Bloco 1'
       },
       type: 'Text',
@@ -536,7 +467,6 @@ export default {
 
     defaultBlock2StartTime: {
       label: {
-        en: 'Default Block 2 Start Time',
         pt: 'Horário Padrão Início Bloco 2'
       },
       type: 'Text',
@@ -556,7 +486,6 @@ export default {
 
     defaultBlock2EndTime: {
       label: {
-        en: 'Default Block 2 End Time',
         pt: 'Horário Padrão Término Bloco 2'
       },
       type: 'Text',
@@ -576,7 +505,6 @@ export default {
 
     autoExpand: {
       label: {
-        en: 'Auto Expand Selected Days',
         pt: 'Expandir Automaticamente Dias Selecionados'
       },
       type: 'OnOff',
@@ -597,7 +525,6 @@ export default {
     // Mensagens de Validação
     msgErroBlocoIncompleto: {
       label: {
-        en: 'Incomplete Block Error Message',
         pt: 'Mensagem Erro Bloco Incompleto'
       },
       type: 'Text',
@@ -618,7 +545,6 @@ export default {
 
     msgErroTerminoMenorInicio: {
       label: {
-        en: 'End Before Start Error Message',
         pt: 'Mensagem Erro Término Antes de Início'
       },
       type: 'Text',
@@ -639,7 +565,6 @@ export default {
 
     msgErroSobreposicao: {
       label: {
-        en: 'Overlapping Blocks Error Message',
         pt: 'Mensagem Erro Sobreposição'
       },
       type: 'Text',
