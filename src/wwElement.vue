@@ -556,30 +556,19 @@ export default {
       const dia = diasSemana.value.find(d => d.key === diaKey);
       const quantidade = quantidadeBlocosPorDia.value[dia.index];
 
-      console.log(`[Validação Sobreposição] Validando bloco ${blocoNum} de ${diaKey}: ${inicio} - ${termino}`);
-      console.log(`[Validação Sobreposição] dia.index: ${dia.index}, quantidade de blocos: ${quantidade}`);
-
       for (let i = 1; i <= quantidade; i++) {
         if (i === blocoNum) continue; // Pula o bloco atual
 
         const outroInicio = blocos.value[diaKey]?.[`bloco_${i}_inicio`];
         const outroTermino = blocos.value[diaKey]?.[`bloco_${i}_termino`];
 
-        console.log(`[Validação Sobreposição] Bloco ${i} - inicio: "${outroInicio}", termino: "${outroTermino}"`);
-
-        if (!outroInicio || !outroTermino) {
-          console.log(`[Validação Sobreposição] Bloco ${i} INCOMPLETO - pulando`);
-          continue; // Pula blocos incompletos
-        }
-
-        console.log(`[Validação Sobreposição] Comparando com bloco ${i}: ${outroInicio} - ${outroTermino}`);
+        if (!outroInicio || !outroTermino) continue; // Pula blocos incompletos
 
         // Verifica sobreposição
         // Bloco atual começa durante outro bloco OU bloco atual termina durante outro bloco
         // OU bloco atual engloba outro bloco
         if (inicio < outroTermino && termino > outroInicio) {
           const msgBase = props.content?.msgErroSobreposicao || 'Sobreposição com o bloco';
-          console.log(`[Validação Sobreposição] SOBREPOSIÇÃO DETECTADA! Bloco ${blocoNum} com bloco ${i}`);
           return `${msgBase} ${i}`;
         }
       }
@@ -595,11 +584,7 @@ export default {
       // Verificar se pelo menos um dia está selecionado
       const algumDiaSelecionado = diasSemanaEscolhidos.value.some(dia => dia === true);
 
-      console.log('[Validação] Dias selecionados:', diasSemanaEscolhidos.value);
-      console.log('[Validação] Algum dia selecionado:', algumDiaSelecionado);
-
       if (!algumDiaSelecionado) {
-        console.log('[Validação] NENHUM DIA SELECIONADO - definindo validacaoOk = false');
         errosPorBloco.value = novosErros;
         setMensagensErro(mensagens);
         setValidacaoOk(false);
@@ -615,7 +600,6 @@ export default {
           const erro = validarBloco(dia.key, i);
 
           if (erro) {
-            console.log(`[Validação] ERRO encontrado em ${dia.label} - Bloco ${i}: ${erro}`);
             const chave = `${dia.key}_bloco_${i}`;
             novosErros[chave] = erro;
             mensagens.push(`${dia.label} - Bloco ${i}: ${erro}`);
@@ -626,8 +610,6 @@ export default {
       errosPorBloco.value = novosErros;
       setMensagensErro(mensagens);
       setValidacaoOk(mensagens.length === 0);
-      console.log('[Validação] Total de erros:', mensagens.length);
-      console.log('[Validação] validacaoOk final:', mensagens.length === 0);
     };
 
     // Obter erro de um bloco específico
