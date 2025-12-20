@@ -553,11 +553,11 @@ export default {
       }
 
       // Validar sobreposição com outros blocos do mesmo dia
-      const diaIndex = diasSemana.value.findIndex(d => d.key === diaKey);
-      const quantidade = quantidadeBlocosPorDia.value[diaIndex];
+      const dia = diasSemana.value.find(d => d.key === diaKey);
+      const quantidade = quantidadeBlocosPorDia.value[dia.index];
 
       console.log(`[Validação Sobreposição] Validando bloco ${blocoNum} de ${diaKey}: ${inicio} - ${termino}`);
-      console.log(`[Validação Sobreposição] diaIndex: ${diaIndex}, quantidade de blocos: ${quantidade}`);
+      console.log(`[Validação Sobreposição] dia.index: ${dia.index}, quantidade de blocos: ${quantidade}`);
 
       for (let i = 1; i <= quantidade; i++) {
         if (i === blocoNum) continue; // Pula o bloco atual
