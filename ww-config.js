@@ -525,30 +525,55 @@ export default {
       /* wwEditor:end */
     },
 
-    // Dados Iniciais (Pré-carregamento)
+    // Dados Iniciais (Pré-carregamento) - Opção Simplificada (View Unificada)
+    dadosViewUnificada: {
+      label: 'Dados View Unificada (Recomendado)',
+      type: 'Array',
+      section: 'settings',
+      bindable: true,
+      defaultValue: null,
+      options: {
+        item: {
+          type: 'Object'
+        }
+      },
+      /* wwEditor:start */
+      bindingValidation: {
+        type: 'array',
+        tooltip: 'Array da view unificada com: dia_semana, dia_ativo, numero_bloco, horario_inicio, horario_fim'
+      },
+      propertyHelp: {
+        tooltip: 'USE ESTA OPÇÃO! Vincule a view que já contém dias e blocos juntos. Cada item deve ter: dia_semana (0-6), dia_ativo (boolean), numero_bloco, horario_inicio, horario_fim. Filtrar por config_id ou profissional_id.'
+      }
+      /* wwEditor:end */
+    },
+
+    // Dados Iniciais (Pré-carregamento) - Opção com 3 tabelas separadas
     dadosConfig: {
-      label: 'Dados Config (disponibilidade_config)',
+      label: 'Dados Config (opcional)',
       type: 'Object',
       section: 'settings',
       bindable: true,
       defaultValue: null,
+      hidden: (content) => !!content.dadosViewUnificada,
       /* wwEditor:start */
       bindingValidation: {
         type: 'object',
         tooltip: 'Objeto da tabela disponibilidade_config com os campos: id, profissional_id, tempo_antecedencia_minutos, dias_futuro_disponivel, ativo, etc.'
       },
       propertyHelp: {
-        tooltip: 'Vincule aqui a coleção/registro da tabela disponibilidade_config. Usado para pré-carregar a configuração do profissional.'
+        tooltip: 'Alternativa: use apenas se NÃO estiver usando a View Unificada. Vincule aqui a tabela disponibilidade_config.'
       }
       /* wwEditor:end */
     },
 
     dadosDias: {
-      label: 'Dados Dias (disponibilidade_dias)',
+      label: 'Dados Dias (opcional)',
       type: 'Array',
       section: 'settings',
       bindable: true,
       defaultValue: null,
+      hidden: (content) => !!content.dadosViewUnificada,
       options: {
         item: {
           type: 'Object'
@@ -560,17 +585,18 @@ export default {
         tooltip: 'Array da tabela disponibilidade_dias com os campos: id, config_id, dia_semana (0-6), Ativo'
       },
       propertyHelp: {
-        tooltip: 'Vincule aqui a coleção da tabela disponibilidade_dias. Cada item deve ter: id, config_id, dia_semana (0=domingo, 1=segunda...), Ativo (boolean).'
+        tooltip: 'Alternativa: use apenas se NÃO estiver usando a View Unificada. Vincule aqui a tabela disponibilidade_dias.'
       }
       /* wwEditor:end */
     },
 
     dadosDiasBlocos: {
-      label: 'Dados Blocos (disponibilidade_dias_blocos)',
+      label: 'Dados Blocos (opcional)',
       type: 'Array',
       section: 'settings',
       bindable: true,
       defaultValue: null,
+      hidden: (content) => !!content.dadosViewUnificada,
       options: {
         item: {
           type: 'Object'
@@ -582,7 +608,7 @@ export default {
         tooltip: 'Array da tabela disponibilidade_dias_blocos com os campos: id, dia_id, numero_bloco, horario_inicio, horario_fim'
       },
       propertyHelp: {
-        tooltip: 'Vincule aqui a coleção da tabela disponibilidade_dias_blocos. Cada item deve ter: id, dia_id, numero_bloco, horario_inicio (time), horario_fim (time).'
+        tooltip: 'Alternativa: use apenas se NÃO estiver usando a View Unificada. Vincule aqui a tabela disponibilidade_dias_blocos.'
       }
       /* wwEditor:end */
     }

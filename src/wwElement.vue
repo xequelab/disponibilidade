@@ -346,15 +346,89 @@ export default {
       6: 'sabado'
     };
 
-    // Função para carregar dados iniciais das tabelas
-    const carregarDadosIniciais = () => {
-      const dadosConfig = props.content?.dadosConfig;
+    // Função para carregar dados da View Unificada (opção recomendada)
+    const carregarDadosViewUnificada = () => {
+      const dadosView = props.content?.dadosViewUnificada;
+
+      if (!dadosView || !Array.isArray(dadosView) || dadosView.length === 0) {
+        return false;
+      }
+
+      // Marca que os dados foram carregados para não recarregar
+      dadosIniciaisCarregados.value = true;
+
+      // Processar dados da view - cada registro tem dia_semana, dia_ativo, numero_bloco, horarios
+      const novosDiasSemana = [false, false, false, false, false, false, false];
+      const novosBlocos = inicializarBlocos();
+      const contagemBlocosPorDia = [0, 0, 0, 0, 0, 0, 0];
+
+      dadosView.forEach(registro => {
+        const diaSemana = registro.dia_semana;
+        const diaAtivo = registro.dia_ativo === true;
+        const numeroBloco = registro.numero_bloco;
+
+        if (diaSemana < 0 || diaSemana > 6) {
+          return; // dia_semana inválido
+        }
+
+        // Atualizar dia selecionado
+        if (diaAtivo) {
+          novosDiasSemana[diaSemana] = true;
+        }
+
+        // Processar bloco se tiver numero_bloco válido
+        if (numeroBloco >= 1 && numeroBloco <= 6) {
+          const diaKey = indexToDiaKey[diaSemana];
+
+          // Formatar horários (garantir formato HH:MM:SS)
+          let horarioInicio = registro.horario_inicio || '';
+          let horarioFim = registro.horario_fim || '';
+
+          // Se o horário não tem segundos, adiciona :00
+          if (horarioInicio && horarioInicio.split(':').length === 2) {
+            horarioInicio = `${horarioInicio}:00`;
+          }
+          if (horarioFim && horarioFim.split(':').length === 2) {
+            horarioFim = `${horarioFim}:00`;
+          }
+
+          novosBlocos[diaKey][`bloco_${numeroBloco}_inicio`] = horarioInicio;
+          novosBlocos[diaKey][`bloco_${numeroBloco}_termino`] = horarioFim;
+
+          // Atualiza contagem de blocos para o dia
+          if (numeroBloco > contagemBlocosPorDia[diaSemana]) {
+            contagemBlocosPorDia[diaSemana] = numeroBloco;
+          }
+        }
+      });
+
+      setDiasSemanaEscolhidos(novosDiasSemana);
+      setBlocos(novosBlocos);
+      setQuantidadeBlocosPorDia(contagemBlocosPorDia);
+
+      // Expandir automaticamente os dias selecionados
+      nextTick(() => {
+        novosDiasSemana.forEach((selecionado, index) => {
+          if (selecionado) {
+            expandedDays.value.add(index);
+          }
+        });
+
+        // Validar após carregar
+        validarTodosOsBlocos();
+      });
+
+      return true;
+    };
+
+    // Função para carregar dados das 3 tabelas separadas (opção alternativa)
+    const carregarDadosTabelasSeparadas = () => {
       const dadosDias = props.content?.dadosDias;
       const dadosDiasBlocos = props.content?.dadosDiasBlocos;
 
       // Verifica se temos os dados necessários (pelo menos dias)
       if (!dadosDias || !Array.isArray(dadosDias) || dadosDias.length === 0) {
-        return;
+        return false;
       }
 
       // Marca que os dados foram carregados para não recarregar
@@ -431,6 +505,19 @@ export default {
         // Validar após carregar
         validarTodosOsBlocos();
       });
+
+      return true;
+    };
+
+    // Função principal que decide qual método usar
+    const carregarDadosIniciais = () => {
+      // Prioridade 1: View Unificada (recomendado)
+      if (carregarDadosViewUnificada()) {
+        return;
+      }
+
+      // Prioridade 2: Tabelas separadas (alternativa)
+      carregarDadosTabelasSeparadas();
     };
 
     // State interno para controle de expansão
@@ -816,13 +903,24 @@ export default {
       validarTodosOsBlocos();
     });
 
-    // Watch para carregar dados iniciais quando dadosDias mudar
-    // Isso permite que os dados sejam carregados mesmo se chegarem após o mount
+    // Watch para carregar dados iniciais quando dadosViewUnificada mudar (opção recomendada)
+    watch(
+      () => props.content?.dadosViewUnificada,
+      (novosDados) => {
+        // Só carrega se ainda não foram carregados e se temos dados válidos
+        if (!dadosIniciaisCarregados.value && novosDados && Array.isArray(novosDados) && novosDados.length > 0) {
+          carregarDadosIniciais();
+        }
+      },
+      { deep: true, immediate: true }
+    );
+
+    // Watch para carregar dados iniciais quando dadosDias mudar (opção alternativa)
     watch(
       () => props.content?.dadosDias,
       (novosDadosDias) => {
-        // Só carrega se ainda não foram carregados e se temos dados válidos
-        if (!dadosIniciaisCarregados.value && novosDadosDias && Array.isArray(novosDadosDias) && novosDadosDias.length > 0) {
+        // Só carrega se ainda não foram carregados, se não há view unificada, e se temos dados válidos
+        if (!dadosIniciaisCarregados.value && !props.content?.dadosViewUnificada && novosDadosDias && Array.isArray(novosDadosDias) && novosDadosDias.length > 0) {
           carregarDadosIniciais();
         }
       },
