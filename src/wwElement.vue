@@ -406,15 +406,8 @@ export default {
       setBlocos(novosBlocos);
       setQuantidadeBlocosPorDia(contagemBlocosPorDia);
 
-      // Expandir automaticamente os dias selecionados
+      // Validar após carregar (mantém abas fechadas no início)
       nextTick(() => {
-        novosDiasSemana.forEach((selecionado, index) => {
-          if (selecionado) {
-            expandedDays.value.add(index);
-          }
-        });
-
-        // Validar após carregar
         validarTodosOsBlocos();
       });
 
@@ -494,15 +487,8 @@ export default {
       setBlocos(novosBlocos);
       setQuantidadeBlocosPorDia(contagemBlocosPorDia);
 
-      // 3. Expandir automaticamente os dias selecionados
+      // Validar após carregar (mantém abas fechadas no início)
       nextTick(() => {
-        novosDiasSemana.forEach((selecionado, index) => {
-          if (selecionado) {
-            expandedDays.value.add(index);
-          }
-        });
-
-        // Validar após carregar
         validarTodosOsBlocos();
       });
 
