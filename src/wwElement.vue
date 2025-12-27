@@ -195,7 +195,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 
 export default {
   name: 'DisponibilidadeSemanal',
@@ -331,6 +331,107 @@ export default {
       type: 'string',
       defaultValue: computed(() => props.content?.msgErroSobreposicao || 'Sobreposição com o bloco')
     });
+
+    // Flag para controlar se os dados iniciais já foram carregados
+    const dadosIniciaisCarregados = ref(false);
+
+    // Mapeamento de dia_semana (index) para key do objeto blocos
+    const indexToDiaKey = {
+      0: 'domingo',
+      1: 'segunda',
+      2: 'terca',
+      3: 'quarta',
+      4: 'quinta',
+      5: 'sexta',
+      6: 'sabado'
+    };
+
+    // Função para carregar dados iniciais das tabelas
+    const carregarDadosIniciais = () => {
+      const dadosConfig = props.content?.dadosConfig;
+      const dadosDias = props.content?.dadosDias;
+      const dadosDiasBlocos = props.content?.dadosDiasBlocos;
+
+      // Verifica se temos os dados necessários (pelo menos dias)
+      if (!dadosDias || !Array.isArray(dadosDias) || dadosDias.length === 0) {
+        return;
+      }
+
+      // Marca que os dados foram carregados para não recarregar
+      dadosIniciaisCarregados.value = true;
+
+      // 1. Processar diasSemanaEscolhidos a partir de dadosDias
+      const novosDiasSemana = [false, false, false, false, false, false, false];
+      const mapaDiaIdParaIndex = {}; // Mapeia dia_id para dia_semana (index)
+
+      dadosDias.forEach(dia => {
+        const diaSemana = dia.dia_semana;
+        const ativo = dia.Ativo === true || dia.ativo === true; // Suporta ambos os cases
+
+        if (diaSemana >= 0 && diaSemana <= 6) {
+          novosDiasSemana[diaSemana] = ativo;
+          mapaDiaIdParaIndex[dia.id] = diaSemana;
+        }
+      });
+
+      setDiasSemanaEscolhidos(novosDiasSemana);
+
+      // 2. Processar blocos a partir de dadosDiasBlocos
+      const novosBlocos = inicializarBlocos();
+      const contagemBlocosPorDia = [0, 0, 0, 0, 0, 0, 0];
+
+      if (dadosDiasBlocos && Array.isArray(dadosDiasBlocos)) {
+        dadosDiasBlocos.forEach(bloco => {
+          const diaIndex = mapaDiaIdParaIndex[bloco.dia_id];
+
+          if (diaIndex === undefined || diaIndex < 0 || diaIndex > 6) {
+            return; // dia_id não encontrado no mapeamento
+          }
+
+          const diaKey = indexToDiaKey[diaIndex];
+          const numeroBloco = bloco.numero_bloco;
+
+          if (!diaKey || numeroBloco < 1 || numeroBloco > 6) {
+            return; // Dados inválidos
+          }
+
+          // Formatar horários (garantir formato HH:MM:SS)
+          let horarioInicio = bloco.horario_inicio || '';
+          let horarioFim = bloco.horario_fim || '';
+
+          // Se o horário não tem segundos, adiciona :00
+          if (horarioInicio && horarioInicio.split(':').length === 2) {
+            horarioInicio = `${horarioInicio}:00`;
+          }
+          if (horarioFim && horarioFim.split(':').length === 2) {
+            horarioFim = `${horarioFim}:00`;
+          }
+
+          novosBlocos[diaKey][`bloco_${numeroBloco}_inicio`] = horarioInicio;
+          novosBlocos[diaKey][`bloco_${numeroBloco}_termino`] = horarioFim;
+
+          // Atualiza contagem de blocos para o dia
+          if (numeroBloco > contagemBlocosPorDia[diaIndex]) {
+            contagemBlocosPorDia[diaIndex] = numeroBloco;
+          }
+        });
+      }
+
+      setBlocos(novosBlocos);
+      setQuantidadeBlocosPorDia(contagemBlocosPorDia);
+
+      // 3. Expandir automaticamente os dias selecionados
+      nextTick(() => {
+        novosDiasSemana.forEach((selecionado, index) => {
+          if (selecionado) {
+            expandedDays.value.add(index);
+          }
+        });
+
+        // Validar após carregar
+        validarTodosOsBlocos();
+      });
+    };
 
     // State interno para controle de expansão
     const expandedDays = ref(new Set());
@@ -706,10 +807,27 @@ export default {
       fecharModalCopia();
     };
 
-    // Validação inicial quando componente carrega
+    // Validação inicial e carregamento de dados quando componente carrega
     onMounted(() => {
+      // Tenta carregar dados iniciais se disponíveis
+      if (!dadosIniciaisCarregados.value) {
+        carregarDadosIniciais();
+      }
       validarTodosOsBlocos();
     });
+
+    // Watch para carregar dados iniciais quando dadosDias mudar
+    // Isso permite que os dados sejam carregados mesmo se chegarem após o mount
+    watch(
+      () => props.content?.dadosDias,
+      (novosDadosDias) => {
+        // Só carrega se ainda não foram carregados e se temos dados válidos
+        if (!dadosIniciaisCarregados.value && novosDadosDias && Array.isArray(novosDadosDias) && novosDadosDias.length > 0) {
+          carregarDadosIniciais();
+        }
+      },
+      { deep: true, immediate: true }
+    );
 
     // Watch para validar quando dias selecionados mudam
     watch(
